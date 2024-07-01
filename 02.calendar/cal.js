@@ -4,56 +4,38 @@ import ja from "dayjs/locale/ja.js";
 dayjs.locale(ja);
 
 const argv = minimist(process.argv.slice(2));
-const setYearMonth = [argv.y, argv.m];
-
+const yearMonthValue = [argv.y, argv.m];
+const year = yearMonthValue[0] || dayjs(today).$y;
+const month = yearMonthValue[1] || dayjs(today).$M + 1;
 const today = new Date();
-
-const year = setYearMonth[0] || dayjs(today).$y;
-const month = setYearMonth[1] || dayjs(today).$M + 1;
 const firstDay = dayjs(new Date(year, month, 1)).$D;
 const lastDay = dayjs(new Date(year, month, 0)).$D;
 const firstDayOfWeek = dayjs(`"${year}-${month}-${firstDay}"`).$W;
-const weekDays = "日 月 火 水 木 金 土";
 
-// 年月・曜日を表示
 console.log(`${" ".repeat(7)}${month}月 ${year}`);
-console.log(weekDays);
+console.log("日 月 火 水 木 金 土");
 
-//　月の初日から最終日までを生成
 const createFirstDayToLastday = (lastDay) => {
-  let monthOfDays = [];
+  const monthOfDays = [];
   for (let i = 1; i <= lastDay; i++) {
     monthOfDays.push(i);
   }
   return monthOfDays;
 };
 
-// カレンダー日付を出力する
-const outputcalendar = () => {
-  // 改行を付ける
-  const breakedWeekLine = addBreakWeekLine();
-  // 10未満の日付に半角スペースをつける
-  const addSpacedDays = addSpaceLessThanTen(breakedWeekLine).join("");
-  // 初日の位置を調整する
-  return adjustedFirstDayPosition(addSpacedDays, firstDayOfWeek);
-};
-
-const addBreakWeekLine = () => {
+const addLineBreaksToDays = () => {
   const allDays = createFirstDayToLastday(lastDay);
-  let weekLine = [];
-  allDays.forEach((d) => {
-    const dayOfWeek = dayjs(`"${year}-${month}-${d}"`).$W;
-    weekLine.push(dayOfWeek === 6 ? `${d}\n` : `${d} `);
+  const dayWithLineBreaks = allDays.map((day) => {
+    const dayOfWeek = dayjs(`"${year}-${month}-${day}"`).$W;
+    return dayOfWeek === 6 ? `${day}\n` : `${day} `;
   });
-  return weekLine;
+  return dayWithLineBreaks;
 };
 
 const addSpaceLessThanTen = (days) => {
-  let daysValue = [];
-  days.forEach((d) => {
-    daysValue.push(d < 10 ? ` ${d}` : `${d}`);
+  const daysValue = days.map((day) => {
+    return day < 10 ? ` ${day}` : `${day}`;
   });
-
   return daysValue;
 };
 
@@ -62,4 +44,10 @@ const adjustedFirstDayPosition = (days, firstDayOfWeek) => {
   return `${" ".repeat(spaces)}${days}`;
 };
 
-console.log(outputcalendar());
+const outputCalendar = () => {
+  const dayWithLineBreaks = addLineBreaksToDays();
+  const dayWithSpaces = addSpaceLessThanTen(dayWithLineBreaks).join("");
+  return adjustedFirstDayPosition(dayWithSpaces, firstDayOfWeek);
+};
+
+console.log(outputCalendar());
