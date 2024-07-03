@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import minimist from "minimist";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja.js";
@@ -5,9 +7,9 @@ dayjs.locale(ja);
 
 const argv = minimist(process.argv.slice(2));
 const yearMonthValue = [argv.y, argv.m];
+const today = new Date();
 const year = yearMonthValue[0] || dayjs(today).$y;
 const month = yearMonthValue[1] || dayjs(today).$M + 1;
-const today = new Date();
 const firstDay = dayjs(new Date(year, month, 1)).$D;
 const lastDay = dayjs(new Date(year, month, 0)).$D;
 const firstDayOfWeek = dayjs(`"${year}-${month}-${firstDay}"`).$W;
