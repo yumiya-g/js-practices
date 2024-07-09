@@ -29,14 +29,14 @@ const addLineBreaksToDays = () => {
   const allDays = createFirstDayToLastday(lastDay);
   const dayWithLineBreaks = allDays.map((day) => {
     const dayOfWeek = dayjs([year, month, day]).day();
-    return dayOfWeek === 6 ? `${day}\n` : `${day} `;
+    return dayOfWeek === 6 ? day + "\n" : day.toString().padEnd(2);
   });
   return dayWithLineBreaks;
 };
 
 const addSpaceLessThanTen = (days) => {
   const daysValue = days.map((day) => {
-    return day < 10 ? ` ${day}` : `${day}`;
+    return day < 10 ? day.padStart(3, " ") : day.padEnd(3);
   });
   return daysValue;
 };
