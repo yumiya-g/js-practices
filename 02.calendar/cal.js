@@ -23,15 +23,11 @@ const outputCalendar = (year, month) => {
   const allDays = createAllDatesInMonth(
     dayjs([year, month]).endOf("month").date(),
   );
-  if (allDays[0] === 1) {
-    const spaces = dayjs([year, month]).day() * 3 + 2;
-    allDays[0] = allDays[0].toString().padStart(spaces, " ");
-  }
+  const spaces = dayjs([year, month]).day() * 3 + 2;
+  allDays[0] = allDays[0].toString().padStart(spaces, " ");
 
   const adjustAllDates = allDays.map((day) => {
-    if (1 < day && day < 10) {
-      day = day.toString().padStart(2, " ");
-    }
+    day = day.toString().padStart(2, " ");
     return day + `${dayjs([year, month, day]).day() === 6 ? "\n" : " "}`;
   });
   return adjustAllDates.join("");
