@@ -10,5 +10,15 @@
     "globals": "^15.3.0",
     "prettier": "^3.2.5"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "minimist": "^1.2.8"
+  },
+  "name": "02.calendar",
+  "version": "1.0.0",
+  "main": "cal.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
