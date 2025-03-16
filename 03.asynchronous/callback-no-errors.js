@@ -18,6 +18,7 @@ db.run(createTableQuery, function (err) {
         if (err) {
           console.log(err.message);
         } else {
+          console.log(`ID: ${this.lastID}`);
           db.run(
             "insert into books(title) values(?)",
             "初めてのJavaScript",
@@ -25,6 +26,7 @@ db.run(createTableQuery, function (err) {
               if (err) {
                 console.log(err.message);
               } else {
+                console.log(`ID: ${this.lastID}`);
                 db.each(
                   "select * from books",
                   (err, row) => {
