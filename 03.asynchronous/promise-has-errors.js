@@ -1,4 +1,4 @@
-import * as hasError from "./promise-registerBooks.js";
+import * as hasError from "./registerBooks.js";
 
 hasError
   .registerBooks(hasError.createTableQuery)

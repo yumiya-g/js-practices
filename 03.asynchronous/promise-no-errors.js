@@ -1,4 +1,4 @@
-import * as noError from "./promise-registerBooks.js";
+import * as noError from "./registerBooks.js";
 
 noError
   .registerBooks(noError.createTableQuery)
