@@ -1,4 +1,4 @@
-import * as noError from "./promise-registerBooks.js";
+import * as noError from "./registerBooks.js";
 
 async function AsyncNoError() {
   await noError.registerBooks(noError.createTableQuery);
@@ -14,6 +14,9 @@ async function AsyncNoError() {
     "insert into books(title) values(?)",
     "JavaScript入門",
   );
+}
+
+AsyncNoError().finally(() => {
   noError.db.each(
     "select * from books",
     (err, row) => {
@@ -27,6 +30,4 @@ async function AsyncNoError() {
       }
     },
   );
-}
-
-AsyncNoError();
+});
