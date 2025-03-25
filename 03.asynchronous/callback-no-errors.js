@@ -6,40 +6,24 @@ const createTableQuery = `CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREME
 const insertTableQuery = `INSERT INTO books (title) VALUES(?)`;
 const selectTableQuery = `SELECT * FROM books`;
 
-db.run(createTableQuery, function (err) {
-  if (err) {
-    console.log(err.message);
-  } else {
-    db.run(
-      insertTableQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-      function (err) {
-        if (err) {
-          console.log(err.message);
-        } else {
-          console.log(`ID: ${this.lastID}`);
-          db.run(insertTableQuery, "初めてのJavaScript", function (err) {
-            if (err) {
-              console.log(err.message);
-            } else {
-              console.log(`ID: ${this.lastID}`);
-              db.each(
-                selectTableQuery,
-                (err, row) => {
-                  console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-                },
-                function (err) {
-                  if (err) {
-                    console.log(err.message);
-                  } else {
-                    db.close();
-                  }
-                },
-              );
-            }
-          });
-        }
-      },
-    );
-  }
+db.run(createTableQuery, function () {
+  db.run(
+    insertTableQuery,
+    "スラスラ読める JavaScriptふりがなプログラミング",
+    function () {
+      console.log(`ID: ${this.lastID}`);
+      db.run(insertTableQuery, "初めてのJavaScript", function () {
+        console.log(`ID: ${this.lastID}`);
+        db.each(
+          selectTableQuery,
+          (_err, row) => {
+            console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+          },
+          () => {
+            db.close();
+          },
+        );
+      });
+    },
+  );
 });
