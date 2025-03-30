@@ -16,7 +16,6 @@ valid_db.run(createTableQuery, function () {
     "スラスラ読める JavaScriptふりがなプログラミング",
     function () {
       console.log(`ID: ${this.lastID}`);
-      valid_db;
       valid_db.run(insertTableQuery, "初めてのJavaScript", function () {
         console.log(`ID: ${this.lastID}`);
         valid_db.each(selectTableQuery, (_err, row) => {
