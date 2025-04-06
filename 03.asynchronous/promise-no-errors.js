@@ -1,40 +1,50 @@
-import * as noError from "./registerBooks.js";
+import sqlite3 from "sqlite3";
 
-noError
-  .registerBooks(noError.createTableQuery)
-  .then(() => {
-    return noError.registerBooks(
-      "insert into books(title) values(?)",
-      "スラスラ読める JavaScriptふりがなプログラミング",
-    );
-  })
-  .then(() => {
-    return noError.registerBooks(
-      "insert into books(title) values(?)",
-      "初めてのJavaScript",
-    );
-  })
-  .then(() => {
-    return noError.registerBooks(
-      "insert into books(title) values(?)",
-      "JavaScript入門",
-    );
-  })
-  .catch((error) => {
-    console.log(error);
-  })
-  .finally(() => {
-    noError.db.each(
-      "select * from books",
-      (err, row) => {
-        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-      },
-      function (err) {
-        if (err) {
-          console.log(err.message);
-        } else {
-          noError.db.close();
-        }
-      },
-    );
+const valid_db = new sqlite3.Database(":memory:");
+const createTableQuery = `CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)`;
+const insertTableQuery = `INSERT INTO books (title) VALUES(?)`;
+const selectTableQuery = `SELECT * FROM books`;
+
+const promise = new Promise((resolve) => {
+  valid_db.run(createTableQuery, function () {
+    resolve(this);
   });
+});
+
+promise
+  .then(
+    () =>
+      new Promise((resolve) => {
+        valid_db.run(
+          insertTableQuery,
+          "スラスラ読める JavaScriptふりがなプログラミング",
+          function () {
+            resolve(this);
+          },
+        );
+      }),
+  )
+  .then(
+    (obj) =>
+      new Promise((resolve) => {
+        valid_db.run(insertTableQuery, "初めてのJavaScript", function () {
+          console.log(`ID: ${obj.lastID}`);
+          resolve(this);
+        });
+      }),
+  )
+  .then((obj) => {
+    console.log(`ID: ${obj.lastID}`);
+    return new Promise((resolve) => {
+      valid_db.each(selectTableQuery, (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      });
+      resolve();
+    });
+  })
+  .then(
+    () =>
+      new Promise((resolve) => {
+        valid_db.close();
+      }),
+  );
