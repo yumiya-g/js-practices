@@ -1,77 +1,74 @@
 import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 
-const valid_db = new sqlite3.Database(":memory:");
-const invalid_db = new sqlite3.Database(":memory:");
+let db = new sqlite3.Database(":memory:");
 const createTableQuery = `CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)`;
 const insertTableQuery = `INSERT INTO books (title) VALUES(?)`;
 const selectTableQuery = `SELECT * FROM books`;
 const insertTableWrongQuery = `INSERT INTO bookss (title) VALUES(?)`;
 const selectTableWrongQuery = `SELECT hoge FROM bbbooks`;
 
-const promise = new Promise((resolve) => {
-  valid_db.run(createTableQuery, () => {
-    resolve(this);
+const promise = (db) =>
+  new Promise((resolve) => {
+    db.run(createTableQuery, () => {
+      resolve(db);
+    });
   });
-});
 
-promise
+promise(db)
   .then(
-    () =>
+    (db) =>
       new Promise((resolve) => {
-        valid_db.run(
+        db.run(
           insertTableQuery,
           "スラスラ読める JavaScriptふりがなプログラミング",
           function () {
-            resolve(this);
+            resolve({ obj: this, db });
           },
         );
       }),
   )
   .then(
-    (obj) =>
+    ({ obj, db }) =>
       new Promise((resolve) => {
-        valid_db.run(insertTableQuery, "初めてのJavaScript", function () {
+        db.run(insertTableQuery, "初めてのJavaScript", function () {
           console.log(`ID: ${obj.lastID}`);
-          resolve(this);
+          resolve({ obj: this, db });
         });
       }),
   )
-  .then((obj) => {
+  .then(({ obj, db }) => {
     console.log(`ID: ${obj.lastID}`);
     return new Promise((resolve) => {
-      valid_db.each(selectTableQuery, (_err, row) => {
+      db.each(selectTableQuery, (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
       resolve();
     });
   })
-  .finally(
-    () =>
-      new Promise(() => {
-        valid_db.close();
-      }),
-  );
+  .finally(() => new Promise(() => db.close()));
 
 await timers.setTimeout(100);
+db = new sqlite3.Database(":memory:");
 
-const invalid_promise = new Promise((resolve) => {
-  invalid_db.run(createTableQuery, () => {
-    resolve(this);
+const invalid_promise = (db) =>
+  new Promise((resolve) => {
+    db.run(createTableQuery, () => {
+      resolve(db);
+    });
   });
-});
 
-invalid_promise
+invalid_promise(db)
   .then(
-    () =>
+    (db) =>
       new Promise((_resolve, reject) => {
-        invalid_db.run(
+        db.run(
           insertTableWrongQuery,
           "スラスラ読める JavaScriptふりがなプログラミング",
           function (err) {
             if (err) {
               console.log(err.message);
-              reject();
+              reject(db);
             } else {
               _resolve(this);
             }
@@ -80,12 +77,12 @@ invalid_promise
       }),
   )
   .catch(
-    () =>
+    (db) =>
       new Promise((_resolve, reject) => {
-        invalid_db.run(insertTableQuery, null, function (err) {
+        db.run(insertTableQuery, null, function (err) {
           if (err) {
             console.log(err.message);
-            reject();
+            reject(db);
           } else {
             _resolve(this);
           }
@@ -93,9 +90,9 @@ invalid_promise
       }),
   )
   .catch(
-    () =>
+    (db) =>
       new Promise((_resolve, reject) => {
-        invalid_db.each(selectTableWrongQuery, function (err) {
+        db.each(selectTableWrongQuery, function (err) {
           if (err) {
             console.log(err.message);
             reject();
@@ -105,9 +102,4 @@ invalid_promise
         });
       }),
   )
-  .finally(
-    () =>
-      new Promise(() => {
-        invalid_db.close();
-      }),
-  );
+  .finally(() => new Promise(() => db.close()));
