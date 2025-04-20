@@ -23,22 +23,22 @@ promise(db)
           insertTableQuery,
           "スラスラ読める JavaScriptふりがなプログラミング",
           function () {
-            resolve({ obj: this, db });
+            resolve({ props: this, db });
           },
         );
       }),
   )
   .then(
-    ({ obj, db }) =>
+    ({ props, db }) =>
       new Promise((resolve) => {
         db.run(insertTableQuery, "初めてのJavaScript", function () {
-          console.log(`ID: ${obj.lastID}`);
-          resolve({ obj: this, db });
+          console.log(`ID: ${props.lastID}`);
+          resolve({ props: this, db });
         });
       }),
   )
-  .then(({ obj, db }) => {
-    console.log(`ID: ${obj.lastID}`);
+  .then(({ props, db }) => {
+    console.log(`ID: ${props.lastID}`);
     return new Promise((resolve) => {
       db.each(selectTableQuery, (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
