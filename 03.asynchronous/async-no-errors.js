@@ -36,27 +36,29 @@ const insertSecondBook = ({ props, db }) =>
 const displayBooks = ({ props, db }) =>
   new Promise((resolve) => {
     console.log(`ID: ${props.lastID}`);
-    db.each(selectTableQuery, (_err, row) => {
-      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-    });
-    resolve();
+    db.each(
+      selectTableQuery,
+      (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      },
+      () => resolve(),
+    );
   });
 
 const closeDatabase = () =>
-  new Promise(() => {
-    db.close();
+  new Promise((resolve) => {
+    db.close(() => resolve());
   });
 
-async function asyncNoError() {
+async function asyncNoError(db) {
   let props;
   await promise(db);
-
   props = await insertFirstBook(db);
   props = await insertSecondBook(props);
   await displayBooks(props);
-  await closeDatabase();
+  await closeDatabase(db);
 }
 
-asyncNoError();
+asyncNoError(db);
 
 await timers.setTimeout(100);
