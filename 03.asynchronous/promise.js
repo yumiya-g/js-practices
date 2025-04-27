@@ -51,14 +51,7 @@ promise(db)
 await timers.setTimeout(100);
 db = new sqlite3.Database(":memory:");
 
-const invalid_promise = (db) =>
-  new Promise((resolve) => {
-    db.run(createTableQuery, () => {
-      resolve(db);
-    });
-  });
-
-invalid_promise(db)
+promise(db)
   .then(
     (db) =>
       new Promise((_resolve, reject) => {
