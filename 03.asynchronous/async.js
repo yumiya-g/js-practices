@@ -8,27 +8,26 @@ const selectTableQuery = `SELECT * FROM books`;
 const insertTableWrongQuery = `INSERT INTO bookss (title) VALUES(?)`;
 const selectTableWrongQuery = `SELECT hoge FROM bbbooks`;
 
-const promise = (db) => {
-  return new Promise((resolve) => {
+const promise = (db) =>
+  new Promise((resolve) =>
     db.run(createTableQuery, function () {
       resolve();
-    });
-  });
-};
+    }),
+  );
 
 const insertFirstBook = (db) =>
-  new Promise((resolve) => {
+  new Promise((resolve) =>
     db.run(
       insertTableQuery,
       "スラスラ読める JavaScriptふりがなプログラミング",
       function () {
         resolve({ props: this, db });
       },
-    );
-  });
+    ),
+  );
 
 const insertFirstBookError = (db) =>
-  new Promise((_, reject) => {
+  new Promise((_, reject) =>
     db.run(
       insertTableWrongQuery,
       "スラスラ読める JavaScriptふりがなプログラミング",
@@ -39,27 +38,27 @@ const insertFirstBookError = (db) =>
           _(this);
         }
       },
-    );
-  });
+    ),
+  );
 
 const insertSecondBook = ({ props, db }) =>
-  new Promise((resolve) => {
+  new Promise((resolve) =>
     db.run(insertTableQuery, "初めてのJavaScript", function () {
       console.log(`ID: ${props.lastID}`);
       resolve({ props: this, db });
-    });
-  });
+    }),
+  );
 
 const insertSecondBookError = (db) =>
-  new Promise((_, reject) => {
+  new Promise((_, reject) =>
     db.run(insertTableQuery, null, function (err) {
       if (err) {
         reject(err);
       } else {
         _(this);
       }
-    });
-  });
+    }),
+  );
 
 const displayBooks = ({ props, db }) =>
   new Promise((resolve) => {
@@ -74,7 +73,7 @@ const displayBooks = ({ props, db }) =>
   });
 
 const displayBooksError = (db) =>
-  new Promise((_, reject) => {
+  new Promise((_, reject) =>
     db.each(selectTableWrongQuery, (err, _row) => {
       if (err) {
         reject(err);
@@ -82,13 +81,10 @@ const displayBooksError = (db) =>
         console.log(`ID: ${_row.id}, タイトル: ${_row.title}`);
         _(this);
       }
-    });
-  });
+    }),
+  );
 
-const closeDatabase = () =>
-  new Promise((resolve) => {
-    db.close(() => resolve());
-  });
+const closeDatabase = () => new Promise((resolve) => db.close(() => resolve()));
 
 async function asyncNoError(db) {
   let obj;
