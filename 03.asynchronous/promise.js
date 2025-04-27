@@ -54,7 +54,7 @@ db = new sqlite3.Database(":memory:");
 promise(db)
   .then(
     (db) =>
-      new Promise((_resolve, reject) => {
+      new Promise((_resolve, reject) =>
         db.run(
           insertTableWrongQuery,
           "スラスラ読める JavaScriptふりがなプログラミング",
@@ -66,33 +66,33 @@ promise(db)
               _resolve(this);
             }
           },
-        );
-      }),
+        ),
+      ),
   )
   .catch(
     (db) =>
-      new Promise((_resolve, reject) => {
-        db.run(insertTableQuery, null, function (err) {
+      new Promise((_resolve, reject) =>
+        db.run(insertTableQuery, null, (err) => {
           if (err) {
             console.log(err.message);
             reject(db);
           } else {
             _resolve(this);
           }
-        });
-      }),
+        }),
+      ),
   )
   .catch(
     (db) =>
-      new Promise((_resolve, reject) => {
-        db.each(selectTableWrongQuery, function (err) {
+      new Promise((_resolve, reject) =>
+        db.each(selectTableWrongQuery, (err) => {
           if (err) {
             console.log(err.message);
             reject();
           } else {
             _resolve(this);
           }
-        });
-      }),
+        }),
+      ),
   )
   .finally(() => new Promise(() => db.close()));
