@@ -91,11 +91,11 @@ const closeDatabase = () =>
   });
 
 async function asyncNoError(db) {
-  let props;
+  let obj;
   await promise(db);
-  props = await insertFirstBook(db);
-  props = await insertSecondBook(props);
-  await displayBooks(props);
+  obj = await insertFirstBook(db);
+  obj = await insertSecondBook(obj);
+  await displayBooks(obj);
   await closeDatabase(db);
 }
 
