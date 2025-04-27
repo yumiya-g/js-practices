@@ -5,6 +5,8 @@ let db = new sqlite3.Database(":memory:");
 const createTableQuery = `CREATE TABLE books (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)`;
 const insertTableQuery = `INSERT INTO books (title) VALUES(?)`;
 const selectTableQuery = `SELECT * FROM books`;
+const insertTableWrongQuery = `INSERT INTO bookss (title) VALUES(?)`;
+const selectTableWrongQuery = `SELECT hoge FROM bbbooks`;
 
 const promise = (db) => {
   return new Promise((resolve) => {
@@ -25,11 +27,37 @@ const insertFirstBook = (db) =>
     );
   });
 
+const insertFirstBookError = (db) =>
+  new Promise((_, reject) => {
+    db.run(
+      insertTableWrongQuery,
+      "スラスラ読める JavaScriptふりがなプログラミング",
+      function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          _(this);
+        }
+      },
+    );
+  });
+
 const insertSecondBook = ({ props, db }) =>
   new Promise((resolve) => {
     db.run(insertTableQuery, "初めてのJavaScript", function () {
       console.log(`ID: ${props.lastID}`);
       resolve({ props: this, db });
+    });
+  });
+
+const insertSecondBookError = (db) =>
+  new Promise((_, reject) => {
+    db.run(insertTableQuery, null, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        _(this);
+      }
     });
   });
 
@@ -43,6 +71,18 @@ const displayBooks = ({ props, db }) =>
       },
       () => resolve(),
     );
+  });
+
+const displayBooksError = (db) =>
+  new Promise((_, reject) => {
+    db.each(selectTableWrongQuery, (err, _row) => {
+      if (err) {
+        reject(err);
+      } else {
+        console.log(`ID: ${_row.id}, タイトル: ${_row.title}`);
+        _(this);
+      }
+    });
   });
 
 const closeDatabase = () =>
@@ -62,3 +102,30 @@ async function asyncNoError(db) {
 asyncNoError(db);
 
 await timers.setTimeout(100);
+
+db = new sqlite3.Database(":memory:");
+
+async function asyncError(db) {
+  await promise(db);
+  try {
+    await insertFirstBookError(db);
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  try {
+    await insertSecondBookError(db);
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  try {
+    await displayBooksError(db);
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  await closeDatabase(db);
+}
+
+asyncError(db);
