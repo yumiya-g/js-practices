@@ -8,7 +8,7 @@ const selectTableQuery = `SELECT * FROM books`;
 const insertTableWrongQuery = `INSERT INTO bookss (title) VALUES(?)`;
 const selectTableWrongQuery = `SELECT hoge FROM bbbooks`;
 
-db.run(createTableQuery, function () {
+db.run(createTableQuery, () => {
   db.run(
     insertTableQuery,
     "スラスラ読める JavaScriptふりがなプログラミング",
@@ -18,9 +18,7 @@ db.run(createTableQuery, function () {
         console.log(`ID: ${this.lastID}`);
         db.each(
           selectTableQuery,
-          (_err, row) => {
-            console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-          },
+          (_err, row) => console.log(`ID: ${row.id}, タイトル: ${row.title}`),
           () => db.close(),
         );
       });
@@ -42,17 +40,14 @@ db.run(createTableQuery, () => {
         db.run(insertTableQuery, null, (err) => {
           if (err) {
             console.log(err.message);
-            db.each(
-              selectTableWrongQuery,
-              (err, _row) => {
-                if (err) {
-                  console.log(err.message);
-                } else {
-                  console.log(_row);
-                }
-              },
-              () => db.close(),
-            );
+            db.each(selectTableWrongQuery, (err, _row) => {
+              if (err) {
+                console.log(err.message);
+              } else {
+                console.log(_row);
+              }
+              () => db.close();
+            });
           } else {
             console.log("エラーなし");
           }
