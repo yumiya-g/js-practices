@@ -40,13 +40,13 @@ db.run(createTableQuery, () => {
     "スラスラ読める JavaScriptふりがなプログラミング",
     (err) => {
       if (err) {
-        console.log(err.message);
+        console.error(err.message);
         db.run(insertTableQuery, null, (err) => {
           if (err) {
-            console.log(err.message);
+            console.error(err.message);
             db.each(selectTableWrongQuery, (err, _row) => {
               if (err) {
-                console.log(err.message);
+                console.error(err.message);
               } else {
                 console.log(_row);
               }
