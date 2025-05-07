@@ -6,6 +6,7 @@ import {
   selectTableQuery,
   insertTableWrongQuery,
   selectTableWrongQuery,
+  deleteTableQuery,
 } from "./queries.js";
 
 let db = new sqlite3.Database(":memory:");
@@ -23,7 +24,7 @@ db.run(createTableQuery, () => {
           (_err, row) => {
             console.log(`ID: ${row.id}, タイトル: ${row.title}`);
           },
-          () => db.close(),
+          () => db.run(deleteTableQuery, () => db.close()),
         );
       });
     },
