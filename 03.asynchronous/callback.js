@@ -24,7 +24,11 @@ db.run(createTableQuery, () => {
           (_err, row) => {
             console.log(`ID: ${row.id}, タイトル: ${row.title}`);
           },
-          () => db.run(deleteTableQuery, () => db.close()),
+          () => {
+            db.run(deleteTableQuery, () => {
+              db.close();
+            });
+          },
         );
       });
     },
@@ -42,24 +46,30 @@ db.run(createTableQuery, () => {
     (err) => {
       if (err) {
         console.error(err.message);
-        db.run(insertTableQuery, null, (err) => {
-          if (err) {
-            console.error(err.message);
-            db.each(selectTableWrongQuery, (err, _row) => {
-              if (err) {
-                console.error(err.message);
-              } else {
-                console.log(_row);
-              }
-              () => db.close();
-            });
-          } else {
-            console.log("エラーなし");
-          }
-        });
       } else {
         console.log("エラーなし");
       }
+
+      db.run(insertTableQuery, null, (err) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log("エラーなし");
+        }
+
+        db.each(selectTableWrongQuery, (err, _row) => {
+          if (err) {
+            console.error(err.message);
+          } else {
+            console.log(_row);
+          }
+          () => {
+            db.run(deleteTableQuery, () => {
+              db.close();
+            });
+          };
+        });
+      });
     },
   );
 });
