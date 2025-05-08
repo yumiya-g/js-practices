@@ -1,3 +1,11 @@
+import {
+  createTableQuery,
+  insertTableQuery,
+  selectTableQuery,
+  insertTableWrongQuery,
+  selectTableWrongQuery,
+} from "./queries.js";
+
 export const promise = (db) =>
   new Promise((resolve) => {
     db.run(createTableQuery, () => {
