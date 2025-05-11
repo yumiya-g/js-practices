@@ -43,25 +43,23 @@ db.run(createTableQuery, () => {
   db.run(
     insertTableWrongQuery,
     "スラスラ読める JavaScriptふりがなプログラミング",
-    (err) => {
+    function (err) {
       if (err) {
         console.error(err.message);
       } else {
-        console.log("エラーなし");
+        console.log(`ID: ${this.lastID}`);
       }
-
-      db.run(insertTableQuery, null, (err) => {
+      db.run(insertTableQuery, null, function (err) {
         if (err) {
           console.error(err.message);
         } else {
-          console.log("エラーなし");
+          console.log(`ID: ${this.lastID}`);
         }
-
-        db.each(selectTableWrongQuery, (err, _row) => {
+        db.each(selectTableWrongQuery, (err, row) => {
           if (err) {
             console.error(err.message);
           } else {
-            console.log(_row);
+            console.log(`ID: ${row.id}, タイトル: ${row.title}`);
           }
           () => {
             db.run(deleteTableQuery, () => {
