@@ -19,14 +19,17 @@ db.run(createTableQuery, () => {
       console.log(`ID: ${this.lastID}`);
       db.run(insertTableQuery, "初めてのJavaScript", function () {
         console.log(`ID: ${this.lastID}`);
-        db.all(selectTableQuery, (_err, rows) => {
-          rows.forEach((row) => {
+        db.each(
+          selectTableQuery,
+          (_err, row) => {
             console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-          });
-          db.run(deleteTableQuery, () => {
-            db.close();
-          });
-        });
+          },
+          () => {
+            db.run(deleteTableQuery, () => {
+              db.close();
+            });
+          },
+        );
       });
     },
   );
@@ -52,18 +55,20 @@ db.run(createTableQuery, () => {
         } else {
           console.log(`ID: ${this.lastID}`);
         }
-        db.all(selectTableWrongQuery, function (err, rows) {
-          if (err) {
-            console.error(err.message);
-          } else {
-            rows.forEach((row) => {
-              console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+        db.each(
+          selectTableWrongQuery,
+          (_err, row) => {
+            console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+          },
+          (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+            db.run(deleteTableQuery, () => {
+              db.close();
             });
-          }
-          db.run(deleteTableQuery, () => {
-            db.close();
-          });
-        });
+          },
+        );
       });
     },
   );
