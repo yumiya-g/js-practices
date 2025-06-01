@@ -1,86 +1,45 @@
-import {
-  createTableQuery,
-  insertTableQuery,
-  selectTableQuery,
-  insertTableWrongQuery,
-  selectTableWrongQuery,
-} from "./queries.js";
+import sqlite3 from "sqlite3";
+sqlite3.verbose();
 
-export const promise = (db) =>
-  new Promise((resolve) => {
-    db.run(createTableQuery, () => {
-      resolve(db);
-    });
+export let db = new sqlite3.Database("database");
+
+export const promiseRun = (query, params = [], callback = null) =>
+  new Promise((resolve, _reject) => {
+    if (callback === null) {
+      callback = function () {
+        resolve(this);
+      };
+    }
+
+    db.run(query, params, callback);
   });
 
-export const insertFirstBook = (db) =>
-  new Promise((resolve) =>
-    db.run(
-      insertTableQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-      function () {
-        resolve({ props: this, db });
-      },
-    ),
-  );
+export const promiseEach = (query, ...args) =>
+  new Promise((resolve, _reject) => {
+    let params = [];
+    let callback = null;
+    let complete = null;
 
-export const insertSecondBook = ({ props, db }) =>
-  new Promise((resolve) =>
-    db.run(insertTableQuery, "初めてのJavaScript", function () {
-      console.log(`ID: ${props.lastID}`);
-      resolve({ props: this, db });
-    }),
-  );
+    if (typeof args[0] === "function") {
+      params = [];
+      callback = args[0];
+      complete = args[1];
+    } else {
+      params = args[0];
+      callback = args[1];
+      complete = args[2];
+    }
 
-export const displayBooks = ({ props, db }) =>
-  new Promise((resolve) => {
-    console.log(`ID: ${props.lastID}`);
-    db.each(
-      selectTableQuery,
-      (_err, row) => {
-        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-      },
-      () => resolve(db),
+    resolve(
+      db.each(
+        query,
+        params,
+        (_err, row) => {
+          callback(_err, row);
+        },
+        () => {
+          complete();
+        },
+      ),
     );
   });
-
-export const insertFirstBookError = (db) =>
-  new Promise((_, reject) =>
-    db.run(
-      insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-      function (err) {
-        if (err) {
-          console.log(err.message);
-          reject(db);
-        } else {
-          _(this);
-        }
-      },
-    ),
-  );
-
-export const insertSecondBookError = (db) =>
-  new Promise((_, reject) =>
-    db.run(insertTableQuery, null, function (err) {
-      if (err) {
-        console.log(err.message);
-        reject(db);
-      } else {
-        _(this);
-      }
-    }),
-  );
-
-export const displayBooksError = (db) =>
-  new Promise((_, reject) =>
-    db.each(selectTableWrongQuery, (err, _row) => {
-      if (err) {
-        console.log(err.message);
-        reject(db);
-      } else {
-        console.log(`ID: ${_row.id}, タイトル: ${_row.title}`);
-        _(this);
-      }
-    }),
-  );
