@@ -1,7 +1,12 @@
 import sqlite3 from "sqlite3";
-sqlite3.verbose();
 
-export let db = new sqlite3.Database("database");
+const createDB = () => new sqlite3.Database("database");
+
+export let db = createDB();
+
+export const recreateDB = () => {
+  db = createDB();
+};
 
 export const promiseRun = (query, params = [], callback = null) =>
   new Promise((resolve, _reject) => {
