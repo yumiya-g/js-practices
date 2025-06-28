@@ -1,83 +1,80 @@
 import timers from "timers/promises";
-import sqlite3 from "sqlite3";
-import * as utils from "./utils.js";
+import { db, promiseRun, promiseEach, recreateDB } from "./functions.js";
 
-let db = new sqlite3.Database(":memory:");
+import {
+  createTableQuery,
+  insertTableQuery,
+  selectTableQuery,
+  insertTableWrongQuery,
+  selectTableWrongQuery,
+  deleteTableQuery,
+} from "./queries.js";
 
-const insertFirstBookError = (db) =>
-  new Promise((_, reject) =>
-    db.run(
-      utils.insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-      function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          _(this);
-        }
-      },
-    ),
+async function exportBookLists() {
+  await promiseRun(createTableQuery);
+  await promiseRun(
+    insertTableQuery,
+    "スラスラ読める JavaScriptふりがなプログラミング",
+    function () {
+      console.log(`ID: ${this.lastID}`);
+    },
   );
+  await promiseRun(insertTableQuery, "初めてのJavaScript", function () {
+    console.log(`ID: ${this.lastID}`);
+  });
+  await promiseEach(selectTableQuery, (_err, row) => {
+    console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+  });
 
-const insertSecondBookError = (db) =>
-  new Promise((_, reject) =>
-    db.run(utils.insertTableQuery, null, function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        _(this);
-      }
-    }),
-  );
-
-const displayBooksError = (db) =>
-  new Promise((_, reject) =>
-    db.each(utils.selectTableWrongQuery, (err, _row) => {
-      if (err) {
-        reject(err);
-      } else {
-        console.log(`ID: ${_row.id}, タイトル: ${_row.title}`);
-        _(this);
-      }
-    }),
-  );
-
-async function asyncNoError(db) {
-  let obj;
-  await utils.promise(db);
-  obj = await utils.insertFirstBook(db);
-  obj = await utils.insertSecondBook(obj);
-  await utils.displayBooks(obj);
-  db.close();
+  db.run(deleteTableQuery, () => {
+    db.close();
+  });
 }
 
-asyncNoError(db);
+exportBookLists();
 
 await timers.setTimeout(100);
 
-db = new sqlite3.Database(":memory:");
+recreateDB();
 
-async function asyncError(db) {
-  await utils.promise(db);
+async function errBookLists() {
+  await promiseRun(createTableQuery);
+
   try {
-    await insertFirstBookError(db);
+    await promiseRun(
+      insertTableWrongQuery,
+      "スラスラ読める JavaScriptふりがなプログラミング2",
+      function (err) {
+        if (!err) {
+          console.log(`ID: ${this.lastID}`);
+        }
+      },
+    );
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
   }
 
   try {
-    await insertSecondBookError(db);
+    await promiseRun(insertTableQuery, null, function (err) {
+      if (!err) {
+        console.log(`ID: ${this.lastID}`);
+      }
+    });
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
   }
 
   try {
-    await displayBooksError(db);
+    await promiseEach(selectTableWrongQuery, (_err, row) => {
+      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+    });
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
   }
 
-  db.close();
+  db.run(deleteTableQuery, () => {
+    db.close();
+  });
 }
 
-asyncError(db);
+errBookLists();
