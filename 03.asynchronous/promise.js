@@ -1,6 +1,5 @@
 import timers from "timers/promises";
 import { db, promiseRun, promiseEach, recreateDB } from "./functions.js";
-
 import {
   createTableQuery,
   insertTableQuery,
@@ -15,14 +14,17 @@ promiseRun(createTableQuery)
     return promiseRun(
       insertTableQuery,
       "スラスラ読める JavaScriptふりがなプログラミング",
+      function () {
+        console.log(`ID: ${this.lastID}`);
+      },
     );
   })
-  .then(function (obj) {
-    console.log(`ID: ${obj.lastID}`);
-    return promiseRun(insertTableQuery, "初めてのJavaScript");
+  .then(function () {
+    return promiseRun(insertTableQuery, "初めてのJavaScript", function () {
+      console.log(`ID: ${this.lastID}`);
+    });
   })
-  .then(function (obj) {
-    console.log(`ID: ${obj.lastID}`);
+  .then(function () {
     return promiseEach(selectTableQuery, (_err, row) => {
       console.log(`ID: ${row.id}, タイトル: ${row.title}`);
     });
@@ -41,7 +43,7 @@ promiseRun(createTableQuery)
   .then(function () {
     return promiseRun(
       insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
+      "スラスラ読める JavaScriptふりがなプログラミング2",
       function (err) {
         if (err) {
           console.error(err.message);
@@ -52,7 +54,7 @@ promiseRun(createTableQuery)
     );
   })
   .then(function () {
-    return promiseRun(insertTableQuery, "初めてのJavaScript", function () {
+    return promiseRun(insertTableQuery, "初めてのJavaScript2", function () {
       console.log(`ID: ${this.lastID}`);
     });
   })
