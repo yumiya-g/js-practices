@@ -1,5 +1,5 @@
 import timers from "timers/promises";
-import sqlite3 from "sqlite3";
+import { db, recreateDB } from "./functions.js";
 import {
   createTableQuery,
   insertTableQuery,
@@ -8,8 +8,6 @@ import {
   selectTableWrongQuery,
   deleteTableQuery,
 } from "./queries.js";
-
-let db = new sqlite3.Database(":memory:");
 
 db.run(createTableQuery, () => {
   db.run(
@@ -37,7 +35,7 @@ db.run(createTableQuery, () => {
 
 await timers.setTimeout(100);
 
-db = new sqlite3.Database(":memory:");
+recreateDB();
 
 db.run(createTableQuery, () => {
   db.run(
