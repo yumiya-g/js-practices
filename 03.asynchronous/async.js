@@ -1,67 +1,56 @@
 import timers from "timers/promises";
 import { db, promiseRun, promiseEach, recreateDB } from "./functions.js";
+import {
+  firstBook,
+  secondBook,
+  firstBookWrong,
+  secondBookWrong,
+} from "./args.js";
 
 import {
   createTableQuery,
-  insertTableQuery,
   selectTableQuery,
-  insertTableWrongQuery,
   selectTableWrongQuery,
   deleteTableQuery,
 } from "./queries.js";
 
 async function exportBookLists() {
+  const args = [firstBook, secondBook];
   await promiseRun(createTableQuery);
-  await promiseRun(
-    insertTableQuery,
-    "スラスラ読める JavaScriptふりがなプログラミング",
-    function () {
-      console.log(`ID: ${this.lastID}`);
-    },
-  );
-  await promiseRun(insertTableQuery, "初めてのJavaScript", function () {
-    console.log(`ID: ${this.lastID}`);
-  });
+
+  for (const arg of args) {
+    try {
+      await promiseRun(arg.query, arg.params, arg.callback);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   await promiseEach(selectTableQuery, (_err, row) => {
     console.log(`ID: ${row.id}, タイトル: ${row.title}`);
   });
+}
 
+exportBookLists().finally(() => {
   db.run(deleteTableQuery, () => {
     db.close();
   });
-}
-
-exportBookLists();
+});
 
 await timers.setTimeout(100);
 
 recreateDB();
 
-async function errBookLists() {
+async function exportErrBookLists() {
+  const args = [firstBookWrong, secondBookWrong];
   await promiseRun(createTableQuery);
 
-  try {
-    await promiseRun(
-      insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング2",
-      function (err) {
-        if (!err) {
-          console.log(`ID: ${this.lastID}`);
-        }
-      },
-    );
-  } catch (err) {
-    console.error(err.message);
-  }
-
-  try {
-    await promiseRun(insertTableQuery, null, function (err) {
-      if (!err) {
-        console.log(`ID: ${this.lastID}`);
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
+  for (const arg of args) {
+    try {
+      await promiseRun(arg.query, arg.params, arg.callback);
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
   try {
@@ -71,10 +60,10 @@ async function errBookLists() {
   } catch (err) {
     console.error(err.message);
   }
+}
 
+exportErrBookLists().finally(() => {
   db.run(deleteTableQuery, () => {
     db.close();
   });
-}
-
-errBookLists();
+});
