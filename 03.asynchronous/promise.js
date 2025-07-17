@@ -14,59 +14,65 @@ import {
   deleteTableQuery,
 } from "./queries.js";
 
-let db = new sqlite3.Database("database");
+const runWithoutError = (db) => {
+  promiseRun(db, createTableQuery)
+    .then(() =>
+      promiseRun(
+        db,
+        insertTableQuery,
+        "スラスラ読める JavaScriptふりがなプログラミング",
+      ),
+    )
+    .then((obj) => {
+      console.log(`ID: ${obj.lastID}`);
+      return promiseRun(db, insertTableQuery, "初めてのJavaScript");
+    })
+    .then((obj) => {
+      console.log(`ID: ${obj.lastID}`);
+      return promiseEach(db, selectTableQuery, (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      });
+    })
+    .finally(() => promiseClose(db, deleteTableQuery));
+};
 
-promiseRun(db, createTableQuery)
-  .then(() =>
-    promiseRun(
-      db,
-      insertTableQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-    ),
-  )
-  .then((obj) => {
-    console.log(`ID: ${obj.lastID}`);
-    return promiseRun(db, insertTableQuery, "初めてのJavaScript");
-  })
-  .then((obj) => {
-    console.log(`ID: ${obj.lastID}`);
-    return promiseEach(db, selectTableQuery, (_err, row) => {
-      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-    });
-  })
-  .finally(() => promiseClose(db, deleteTableQuery));
+const runWithError = (db) => {
+  promiseRun(db, createTableQuery)
+    .then(() =>
+      promiseRun(
+        db,
+        insertTableWrongQuery,
+        "スラスラ読める JavaScriptふりがなプログラミング2",
+      ),
+    )
+    .then((obj) => {
+      console.log(`ID: ${obj.lastID}`);
+      return promiseRun(db, insertTableQuery, "初めてのJavaScript2");
+    })
+    .then((obj) => {
+      console.log(`ID: ${obj.lastID}`);
+      return promiseEach(db, selectTableQuery, (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      });
+    })
+    .catch((err) => {
+      console.error(err.message);
+      return promiseRun(db, insertTableQuery, null);
+    })
+    .catch((err) => {
+      console.error(err.message);
+      return promiseEach(db, selectTableWrongQuery, (err) => {
+        console.error(err.message);
+      });
+    })
+    .catch((err) => console.error(err.message))
+    .finally(() => promiseClose(db, deleteTableQuery));
+};
+
+let db = new sqlite3.Database("database");
+runWithoutError(db);
 
 await timers.setTimeout(100);
 
 db = new sqlite3.Database("database");
-
-promiseRun(db, createTableQuery)
-  .then(() =>
-    promiseRun(
-      db,
-      insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング2",
-    ),
-  )
-  .then((obj) => {
-    console.log(`ID: ${obj.lastID}`);
-    return promiseRun(db, insertTableQuery, "初めてのJavaScript2");
-  })
-  .then((obj) => {
-    console.log(`ID: ${obj.lastID}`);
-    return promiseEach(db, selectTableQuery, (_err, row) => {
-      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-    });
-  })
-  .catch((err) => {
-    console.error(err.message);
-    return promiseRun(db, insertTableQuery, null);
-  })
-  .catch((err) => {
-    console.error(err.message);
-    return promiseEach(db, selectTableWrongQuery, (err) => {
-      console.error(err.message);
-    });
-  })
-  .catch((err) => console.error(err.message))
-  .finally(() => promiseClose(db, deleteTableQuery));
+runWithError(db);
