@@ -9,8 +9,6 @@ import {
   deleteTableQuery,
 } from "./queries.js";
 
-let db = new sqlite3.Database("database");
-
 const registerDatabase = (db) => {
   db.run(createTableQuery, () => {
     db.run(
@@ -36,12 +34,6 @@ const registerDatabase = (db) => {
     );
   });
 };
-
-registerDatabase(db);
-
-await timers.setTimeout(100);
-
-db = new sqlite3.Database("database");
 
 const registerDatabaseWithErrors = (db) => {
   db.run(createTableQuery, () => {
@@ -80,4 +72,10 @@ const registerDatabaseWithErrors = (db) => {
   });
 };
 
+let db = new sqlite3.Database("database");
+registerDatabase(db);
+
+await timers.setTimeout(100);
+
+db = new sqlite3.Database("database");
 registerDatabaseWithErrors(db);
