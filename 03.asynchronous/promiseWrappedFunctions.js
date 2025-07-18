@@ -20,9 +20,13 @@ export const promiseEach = (db, query, complete) =>
     });
   });
 
-export const promiseClose = (db, query) =>
-  new Promise((resolve) => {
-    db.run(query, () => {
-      db.close(() => resolve());
+export const promiseClose = (db) =>
+  new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
   });

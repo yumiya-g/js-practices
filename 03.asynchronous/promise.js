@@ -33,7 +33,7 @@ const runWithoutError = (db) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
-    .finally(() => promiseClose(db, deleteTableQuery));
+    .finally(() => promiseClose(db));
 };
 
 const runWithError = (db) => {
@@ -66,7 +66,7 @@ const runWithError = (db) => {
       });
     })
     .catch((err) => console.error(err.message))
-    .finally(() => promiseClose(db, deleteTableQuery));
+    .finally(() => promiseClose(db));
 };
 
 let db = new sqlite3.Database("database");
