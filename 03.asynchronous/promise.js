@@ -23,12 +23,12 @@ const runWithoutError = (db) => {
         "スラスラ読める JavaScriptふりがなプログラミング",
       ),
     )
-    .then((obj) => {
-      console.log(`ID: ${obj.lastID}`);
+    .then((row) => {
+      console.log(`ID: ${row.lastID}`);
       return promiseRun(db, insertTableQuery, "初めてのJavaScript");
     })
-    .then((obj) => {
-      console.log(`ID: ${obj.lastID}`);
+    .then((row) => {
+      console.log(`ID: ${row.lastID}`);
       return promiseEach(db, selectTableQuery, (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
@@ -45,12 +45,12 @@ const runWithError = (db) => {
         "スラスラ読める JavaScriptふりがなプログラミング2",
       ),
     )
-    .then((obj) => {
-      console.log(`ID: ${obj.lastID}`);
+    .then((row) => {
+      console.log(`ID: ${row.lastID}`);
       return promiseRun(db, insertTableQuery, "初めてのJavaScript2");
     })
-    .then((obj) => {
-      console.log(`ID: ${obj.lastID}`);
+    .then((row) => {
+      console.log(`ID: ${row.lastID}`);
       return promiseEach(db, selectTableQuery, (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
