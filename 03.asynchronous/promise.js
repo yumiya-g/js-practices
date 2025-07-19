@@ -33,6 +33,7 @@ const runWithoutError = (db) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
+    .then(() => promiseRun(db, deleteTableQuery))
     .finally(() => promiseClose(db));
 };
 
@@ -66,6 +67,7 @@ const runWithError = (db) => {
       });
     })
     .catch((err) => console.error(err.message))
+    .then(() => promiseRun(db, deleteTableQuery))
     .finally(() => promiseClose(db));
 };
 
