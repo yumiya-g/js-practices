@@ -11,7 +11,7 @@ export const promiseRun = (db, query, params) =>
 
 export const promiseEach = (db, query, params, callback) =>
   new Promise((resolve, reject) => {
-    db.each(query, params, callback, function (err) {
+    db.each(query, params, callback, (err) => {
       if (err) {
         reject(err);
       } else {
