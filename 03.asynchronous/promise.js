@@ -46,27 +46,29 @@ const runWithError = (db) => {
         "スラスラ読める JavaScriptふりがなプログラミング2",
       ),
     )
-    .then((row) => {
-      console.log(`ID: ${row.lastID}`);
-      return promiseRun(db, insertTableQuery, "初めてのJavaScript2");
+    .catch((err) => {
+      console.error(err.message);
+      return promiseRun(db, insertTableQuery, null);
     })
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseEach(db, selectTableQuery, [], (_err, row) => {
+      return promiseRun(db, insertTableQuery, null);
+    })
+    .catch((err) => {
+      console.error(err.message);
+      return promiseEach(db, selectTableWrongQuery, [], (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      });
+    })
+    .then((row) => {
+      console.log(`ID: ${row.lastID}`);
+      return promiseEach(db, selectTableWrongQuery, [], (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
     .catch((err) => {
       console.error(err.message);
-      return promiseRun(db, insertTableQuery, null);
     })
-    .catch((err) => {
-      console.error(err.message);
-      return promiseEach(db, selectTableWrongQuery, [], (err) => {
-        console.error(err.message);
-      });
-    })
-    .catch((err) => console.error(err.message))
     .then(() => promiseRun(db, deleteTableQuery))
     .finally(() => promiseClose(db));
 };
