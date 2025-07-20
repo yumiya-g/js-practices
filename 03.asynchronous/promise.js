@@ -29,7 +29,7 @@ const runWithoutError = (db) => {
     })
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseEach(db, selectTableQuery, (_err, row) => {
+      return promiseEach(db, selectTableQuery, [], (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
@@ -52,7 +52,7 @@ const runWithError = (db) => {
     })
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseEach(db, selectTableQuery, (_err, row) => {
+      return promiseEach(db, selectTableQuery, [], (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
@@ -62,7 +62,7 @@ const runWithError = (db) => {
     })
     .catch((err) => {
       console.error(err.message);
-      return promiseEach(db, selectTableWrongQuery, (err) => {
+      return promiseEach(db, selectTableWrongQuery, [], (err) => {
         console.error(err.message);
       });
     })
