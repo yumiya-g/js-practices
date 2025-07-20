@@ -43,7 +43,7 @@ const runWithError = (db) => {
       promiseRun(
         db,
         insertTableWrongQuery,
-        "スラスラ読める JavaScriptふりがなプログラミング2",
+        "スラスラ読める JavaScriptふりがなプログラミング",
       ),
     )
     .catch((err) => {
