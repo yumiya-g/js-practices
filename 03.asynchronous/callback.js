@@ -10,7 +10,7 @@ import {
 } from "./queries.js";
 
 const runWithoutError = () => {
-  const db = new sqlite3.Database("database");
+  const db = new sqlite3.Database(":memory:");
   db.run(createTableQuery, () => {
     db.run(
       insertTableQuery,
@@ -38,7 +38,7 @@ const runWithoutError = () => {
 };
 
 const runWithError = () => {
-  const db = new sqlite3.Database("database");
+  const db = new sqlite3.Database(":memory:");
   db.run(createTableQuery, () => {
     db.run(
       insertTableWrongQuery,
