@@ -14,7 +14,8 @@ import {
   deleteTableQuery,
 } from "./queries.js";
 
-const runWithoutError = (db) => {
+const runWithoutError = () => {
+  const db = new sqlite3.Database(":memory:");
   promiseRun(db, createTableQuery)
     .then(() =>
       promiseRun(
@@ -37,7 +38,8 @@ const runWithoutError = (db) => {
     .finally(() => promiseClose(db));
 };
 
-const runWithError = (db) => {
+const runWithError = () => {
+  const db = new sqlite3.Database(":memory:");
   promiseRun(db, createTableQuery)
     .then(() =>
       promiseRun(
@@ -73,10 +75,8 @@ const runWithError = (db) => {
     .finally(() => promiseClose(db));
 };
 
-let db = new sqlite3.Database("database");
-runWithoutError(db);
+runWithoutError();
 
 await timers.setTimeout(100);
 
-db = new sqlite3.Database("database");
-runWithError(db);
+runWithError();
