@@ -21,7 +21,6 @@ const runWithoutError = () => {
           console.log(`ID: ${this.lastID}`);
           db.each(
             selectTableQuery,
-            [],
             (_err, row) => {
               console.log(`ID: ${row.id}, タイトル: ${row.title}`);
             },
@@ -57,7 +56,6 @@ const runWithError = () => {
           }
           db.each(
             selectTableWrongQuery,
-            [],
             (_err, row) => {
               console.log(`ID: ${row.id}, タイトル: ${row.title}`);
             },
