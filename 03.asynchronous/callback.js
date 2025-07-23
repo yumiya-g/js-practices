@@ -9,7 +9,8 @@ import {
   deleteTableQuery,
 } from "./queries.js";
 
-const runWithoutError = (db) => {
+const runWithoutError = () => {
+  const db = new sqlite3.Database("database");
   db.run(createTableQuery, () => {
     db.run(
       insertTableQuery,
@@ -36,7 +37,8 @@ const runWithoutError = (db) => {
   });
 };
 
-const runWithError = (db) => {
+const runWithError = () => {
+  const db = new sqlite3.Database("database");
   db.run(createTableQuery, () => {
     db.run(
       insertTableWrongQuery,
@@ -74,10 +76,8 @@ const runWithError = (db) => {
   });
 };
 
-let db = new sqlite3.Database("database");
-runWithoutError(db);
+runWithoutError();
 
 await timers.setTimeout(100);
 
-db = new sqlite3.Database("database");
-runWithError(db);
+runWithError();
