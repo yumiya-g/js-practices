@@ -48,26 +48,24 @@ const runWithError = () => {
         "スラスラ読める JavaScriptふりがなプログラミング",
       ),
     )
-    .catch((err) => {
-      console.error(err.message);
-      return promiseRun(db, insertTableQuery, null);
-    })
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseRun(db, insertTableQuery, null);
     })
     .catch((err) => {
       console.error(err.message);
-      return promiseEach(db, selectTableWrongQuery, [], (_err, row) => {
-        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-      });
     })
+    .then(() => promiseRun(db, insertTableQuery, null))
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseEach(db, selectTableWrongQuery, [], (_err, row) => {
-        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-      });
     })
+    .catch((err) => {
+      console.error(err.message);
+    })
+    .then(() =>
+      promiseEach(db, selectTableWrongQuery, (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      }),
+    )
     .catch((err) => {
       console.error(err.message);
     })
