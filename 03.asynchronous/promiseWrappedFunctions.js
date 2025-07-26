@@ -9,9 +9,9 @@ export const promiseRun = (db, query, params) =>
     });
   });
 
-export const promiseEach = (db, query, params, callback) =>
+export const promiseEach = (db, query, callback) =>
   new Promise((resolve, reject) => {
-    db.each(query, params, callback, (err) => {
+    db.each(query, callback, (err) => {
       if (err) {
         reject(err);
       } else {

@@ -30,7 +30,7 @@ const runWithoutError = () => {
     })
     .then((row) => {
       console.log(`ID: ${row.lastID}`);
-      return promiseEach(db, selectTableQuery, [], (_err, row) => {
+      return promiseEach(db, selectTableQuery, (_err, row) => {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     })
