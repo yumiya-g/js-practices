@@ -9,9 +9,14 @@ export const promiseRun = (db, query, params) =>
     });
   });
 
-export const promiseEach = (db, query, callback) =>
-  new Promise((resolve, reject) => {
-    db.each(query, callback, (err) => {
+export const promiseEach = (db, query, params, callback) => {
+  if (typeof params === "function") {
+    callback = params;
+    params = [];
+  }
+
+  return new Promise((resolve, reject) => {
+    db.each(query, params, callback, (err) => {
       if (err) {
         reject(err);
       } else {
@@ -19,6 +24,7 @@ export const promiseEach = (db, query, callback) =>
       }
     });
   });
+};
 
 export const promiseClose = (db) =>
   new Promise((resolve, reject) => {
