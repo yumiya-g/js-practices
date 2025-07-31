@@ -16,9 +16,9 @@ import {
 
 async function runWithoutError() {
   const db = new sqlite3.Database(":memory:");
-  let result = await promiseRun(db, createTableQuery);
+  await promiseRun(db, createTableQuery);
 
-  result = await promiseRun(
+  let result = await promiseRun(
     db,
     insertTableQuery,
     "スラスラ読める JavaScriptふりがなプログラミング",
@@ -37,10 +37,10 @@ async function runWithoutError() {
 
 async function runWithError() {
   const db = new sqlite3.Database(":memory:");
-  let result = await promiseRun(db, createTableQuery);
+  await promiseRun(db, createTableQuery);
 
   try {
-    result = await promiseRun(
+    const result = await promiseRun(
       db,
       insertTableWrongQuery,
       "スラスラ読める JavaScriptふりがなプログラミング",
@@ -51,7 +51,7 @@ async function runWithError() {
   }
 
   try {
-    result = await promiseRun(db, insertTableQuery, null);
+    const result = await promiseRun(db, insertTableQuery, null);
     console.log(`ID: ${result.lastID}`);
   } catch (err) {
     console.error(err.message);
