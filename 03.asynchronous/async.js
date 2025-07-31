@@ -35,12 +35,42 @@ async function runWithoutError() {
   await promiseClose(db);
 }
 
-// async function runWithError() {
-//   const db = new sqlite3.Database(":memory:");
-// }
+async function runWithError() {
+  const db = new sqlite3.Database(":memory:");
+  let result = await promiseRun(db, createTableQuery);
+
+  try {
+    result = await promiseRun(
+      db,
+      insertTableWrongQuery,
+      "スラスラ読める JavaScriptふりがなプログラミング",
+    );
+    console.log(`ID: ${result.lastID}`);
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  try {
+    result = await promiseRun(db, insertTableQuery, null);
+    console.log(`ID: ${result.lastID}`);
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  try {
+    await promiseEach(db, selectTableWrongQuery, (_err, row) => {
+      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+    });
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  await promiseRun(db, deleteTableQuery);
+  await promiseClose(db);
+}
 
 runWithoutError();
 
 await timers.setTimeout(100);
 
-// runWithError();
+runWithError();
