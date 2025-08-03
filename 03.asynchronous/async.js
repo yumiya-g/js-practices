@@ -43,33 +43,25 @@ async function runWithError() {
   await promiseRun(db, createTableQuery);
 
   try {
-    const result = await promiseRun(
+    let result = await promiseRun(
       db,
       insertTableWrongQuery,
       "スラスラ読める JavaScriptふりがなプログラミング",
     );
     console.log(`ID: ${result.lastID}`);
-  } catch (err) {
-    console.error(err.message);
-  }
 
-  try {
-    const result = await promiseRun(db, insertTableQuery, null);
+    result = await promiseRun(db, insertTableQuery, null);
     console.log(`ID: ${result.lastID}`);
-  } catch (err) {
-    console.error(err.message);
-  }
 
-  try {
     await promiseEach(db, selectTableWrongQuery, (_err, row) => {
       console.log(`ID: ${row.id}, タイトル: ${row.title}`);
     });
   } catch (err) {
-    console.error(err.message);
+    throw new Error(err.message);
+  } finally {
+    await promiseRun(db, deleteTableQuery);
+    await promiseClose(db);
   }
-
-  await promiseRun(db, deleteTableQuery);
-  await promiseClose(db);
 }
 
 runWithoutError();
