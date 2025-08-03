@@ -1,4 +1,3 @@
-import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 import {
   promiseRun,
@@ -64,8 +63,6 @@ async function runWithError() {
   }
 }
 
-runWithoutError();
+await runWithoutError();
 
-await timers.setTimeout(100);
-
-runWithError();
+await runWithError();
