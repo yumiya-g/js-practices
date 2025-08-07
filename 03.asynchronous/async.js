@@ -42,21 +42,45 @@ async function runWithError() {
   await promiseRun(db, createTableQuery);
 
   try {
-    let result = await promiseRun(
-      db,
-      insertTableWrongQuery,
-      "スラスラ読める JavaScriptふりがなプログラミング",
-    );
-    console.log(`ID: ${result.lastID}`);
+    try {
+      const result = await promiseRun(
+        db,
+        insertTableWrongQuery,
+        "スラスラ読める JavaScriptふりがなプログラミング",
+      );
+      console.log(`ID: ${result.lastID}`);
+    } catch (err) {
+      if (err.code === "SQLITE_ERROR") {
+        console.error(err.message);
+      } else {
+        throw err;
+      }
+    }
 
-    result = await promiseRun(db, insertTableQuery, null);
-    console.log(`ID: ${result.lastID}`);
+    try {
+      const result = await promiseRun(db, insertTableQuery, null);
+      console.log(`ID: ${result.lastID}`);
+    } catch (err) {
+      if (err.code === "SQLITE_CONSTRAINT") {
+        console.error(err.message);
+      } else {
+        throw err;
+      }
+    }
 
-    await promiseEach(db, selectTableWrongQuery, (_err, row) => {
-      console.log(`ID: ${row.id}, タイトル: ${row.title}`);
-    });
+    try {
+      await promiseEach(db, selectTableWrongQuery, (_err, row) => {
+        console.log(`ID: ${row.id}, タイトル: ${row.title}`);
+      });
+    } catch (err) {
+      if (err.code === "SQLITE_ERROR") {
+        console.error(err.message);
+      } else {
+        throw err;
+      }
+    }
   } catch (err) {
-    throw new Error(err.message);
+    console.error(err.message);
   } finally {
     await promiseRun(db, deleteTableQuery);
     await promiseClose(db);
