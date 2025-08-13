@@ -40,9 +40,9 @@ async function runWithoutError() {
 
 async function runWithError() {
   const db = new sqlite3.Database(":memory:");
-  await promiseRun(db, createTableQuery);
 
   try {
+    await promiseRun(db, createTableQuery);
     try {
       const result = await promiseRun(
         db,
@@ -80,10 +80,12 @@ async function runWithError() {
         throw err;
       }
     }
+
+    await promiseRun(db, deleteTableQuery);
   } catch (err) {
     console.error(err.message);
-  } finally {
     await promiseRun(db, deleteTableQuery);
+  } finally {
     await promiseClose(db);
   }
 }
