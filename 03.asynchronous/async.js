@@ -15,9 +15,10 @@ import {
 
 async function runWithoutError() {
   const db = new sqlite3.Database(":memory:");
-  await promiseRun(db, createTableQuery);
 
   try {
+    await promiseRun(db, createTableQuery);
+
     let result = await promiseRun(
       db,
       insertTableQuery,
