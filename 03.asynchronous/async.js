@@ -51,7 +51,7 @@ async function runWithError() {
       );
       console.log(`ID: ${result.lastID}`);
     } catch (err) {
-      if (err.code === "SQLITE_ERROR") {
+      if (err instanceof Error && err.code === "SQLITE_ERROR") {
         console.error(err.message);
       } else {
         throw err;
@@ -62,7 +62,7 @@ async function runWithError() {
       const result = await promiseRun(db, insertTableQuery, null);
       console.log(`ID: ${result.lastID}`);
     } catch (err) {
-      if (err.code === "SQLITE_CONSTRAINT") {
+      if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
         console.error(err.message);
       } else {
         throw err;
@@ -74,7 +74,7 @@ async function runWithError() {
         console.log(`ID: ${row.id}, タイトル: ${row.title}`);
       });
     } catch (err) {
-      if (err.code === "SQLITE_ERROR") {
+      if (err instanceof Error && err.code === "SQLITE_ERROR") {
         console.error(err.message);
       } else {
         throw err;
