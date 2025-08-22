@@ -82,9 +82,6 @@ async function runWithError() {
     }
 
     await promiseRun(db, deleteTableQuery);
-  } catch (err) {
-    console.error(err.message);
-    await promiseRun(db, deleteTableQuery);
   } finally {
     await promiseClose(db);
   }
