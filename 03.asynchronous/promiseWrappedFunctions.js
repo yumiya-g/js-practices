@@ -1,0 +1,38 @@
+export const promiseRun = (db, query, params) =>
+  new Promise((resolve, reject) => {
+    db.run(query, params, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(this);
+      }
+    });
+  });
+
+export const promiseEach = (db, query, params, callback) => {
+  if (typeof params === "function") {
+    callback = params;
+    params = [];
+  }
+
+  return new Promise((resolve, reject) => {
+    db.each(query, params, callback, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
+export const promiseClose = (db) =>
+  new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
