@@ -1,34 +1,58 @@
 #!/usr/bin/env node
 
-import { createInterface } from "node:readline/promises";
-import { stdin, stdout, exit } from "node:process";
+import sqlite3 from "sqlite3";
+
+import { createTableQuery, insertTableQuery } from "./queries.js";
+import {
+  promiseRun,
+  promiseClose,
+  promiseReadline,
+} from "./promiseWrappedFunctions.js";
 
 async function inputMemo() {
-  return new Promise((resolve) => {
-    const rl = createInterface({
-      input: stdin,
-            output: stdout,
-    });
+  // DBに接続
+  const db = new sqlite3.Database("memos.db");
 
-    const lines = [];
+  try {
+    // memosテーブルを作成
+    await promiseRun(db, createTableQuery);
 
-    rl.on("line", (line) => {
-      lines.push(line);
-    });
+    // 標準入力を受け付ける
+    const memoLines = await promiseReadline();
 
-    rl.on("close", () => {
-      resolve(lines.join("\n"));
-      console.log(lines); // 標準入力の内容を配列で出力
-    });
-  });
+    // メモのタイトルとテキストを分離
+    const memoTitle =
+      memoLines[0] === undefined || memoLines[0] === ""
+        ? "NoTitle"
+        : memoLines[0];
+    const memoTexts =
+      memoLines.slice(1).filter(Boolean).length === 0
+        ? "NoTexts"
+        : memoLines.slice(1).join("\n");
+
+    // 入力内容を出力
+    console.log(`入力した内容`);
+    console.log(`【メモタイトル】\n${memoTitle}\n`);
+    console.log(`【メモテキスト】\n${memoTexts}`);
+
+    // データベース登録を実行
+    await promiseRun(db, insertTableQuery, [memoTitle, memoTexts]);
+  } catch (err) {
+    console.error(err);
+    throw err; // エラーを伝搬
+  } finally {
+    promiseClose();
+  }
 }
 
 async function main() {
-  const memos = await inputMemo();
-  
-  // 標準入力の内容を出力
-  console.log(`入力した内容：\n${memos}`);
-  exit(0);
+  // データの入力処理
+  await inputMemo();
+
+  // データベースから一覧を取得する
+
+  // プロセスを終了する
+  process.exit(0);
 }
 
 main();
