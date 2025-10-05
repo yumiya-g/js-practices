@@ -32,7 +32,7 @@ export const promiseRun = (db, query, params) =>
     });
   });
 
-  export const promiseClose = (db) =>
+export const promiseClose = (db) =>
   new Promise((resolve, reject) => {
     db.close((err) => {
       if (err) {
