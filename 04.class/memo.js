@@ -9,47 +9,33 @@ import {
   promiseReadline,
 } from "./promiseWrappedFunctions.js";
 
+import { InputHandler } from "./inputHandler.js";
+
 class Memo {
   constructor() {
+    this.inputHandler = new InputHandler();
     this.title = null;
     this.text = null;
     this.option = null;
   }
 
   async inputParse() {
-    try {
-      // 標準入力を受け付ける
-      const memoLines = await promiseReadline();
+    const result = await this.inputHandler.readStdIn();
 
-      // オプションを取る
-      this.option = process.argv[2];
-
-      // メモのタイトルとテキストを分離
-      this.title =
-        memoLines[0] === undefined || memoLines[0] === ""
-          ? "NoTitle"
-          : memoLines[0];
-      this.text =
-        memoLines.slice(1).filter(Boolean).length === 0
-          ? "NoTexts"
-          : memoLines.slice(1).join("\n");
-      return { title: this.title, text: this.text, option: this.option };
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    this.title = result.title;
+    this.text = result.text;
+    this.option = result.option;
+    return { title: this.title, text: this.text, option: this.option };
   }
 
-  async save(parsedMemo) {
+  async save() {
     const db = new sqlite3.Database("memos.db");
+
     try {
       // memosテーブルを作成
       await promiseRun(db, createTableQuery);
       // データベース登録を実行
-      await promiseRun(db, insertTableQuery, [
-        parsedMemo.title,
-        parsedMemo.text,
-      ]);
+      await promiseRun(db, insertTableQuery, [this.title, this.text]);
     } catch (err) {
       console.error(err);
       throw err;
@@ -72,14 +58,16 @@ async function main() {
 
   // オプションなしで保存処理を開始
   if (parsedMemo.option === undefined) {
-    await memo.save(parsedMemo);
-  } else {
-    console.log("オプションありの処理");
+    await memo.save();
+  } else if (parsedMemo.option === "-l") {
+    console.log("タイトル一覧を表示する");
     // オプション`l`：データベースからタイトル一覧を取得する
-
-    // オプション`r`：データベースからタイトル一覧を取得し、選択して本文を出力する
-
-    // オプション`d`：データベースからタイトル一覧を取得し、データを削除する
+  } else if (parsedMemo.option === "-r") {
+    console.log("タイトル一覧を表示して本文を出力する");
+  } else if (parsedMemo.option === "-d") {
+    console.log("タイトル一覧を表示して、メモを削除する");
+  } else {
+    console.log("存在しないオプションが入力されました");
   }
 
   // プロセスを終了する
