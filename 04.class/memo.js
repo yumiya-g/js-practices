@@ -14,13 +14,26 @@ import { InputHandler } from "./inputHandler.js";
 class Memo {
   constructor() {
     this.inputHandler = new InputHandler();
+
     this.title = null;
     this.text = null;
     this.option = null;
   }
 
+  async readStdIn() {
+    // オプションがなければ標準入力を受け付ける
+    console.log(`argv:${process.argv[2]}`)
+    if (process.argv[2] === undefined) {
+      
+      return await this.inputParse();
+    } else {
+      // オプションがあれば出力処理を始める
+      console.log("出力処理を開始します");
+    }
+  }
+
   async inputParse() {
-    const result = await this.inputHandler.readStdIn();
+    const result = await this.inputHandler.parseStdIn();
 
     this.title = result.title;
     this.text = result.text;
@@ -53,8 +66,9 @@ async function main() {
   // メモインスタンスを作成
   const memo = new Memo();
 
+
   // 標準入力をパース
-  const parsedMemo = await memo.inputParse();
+  const parsedMemo = await memo.readStdIn();
 
   // オプションなしで保存処理を開始
   if (parsedMemo.option === undefined) {

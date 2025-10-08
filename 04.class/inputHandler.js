@@ -11,7 +11,7 @@ export class InputHandler {
     this.option = null;
   }
 
-  async readStdIn() {
+  async parseStdIn() {
     try {
       // 標準入力を受け付ける
       const memoLines = await promiseReadline();
@@ -33,5 +33,14 @@ export class InputHandler {
       console.error(err);
       throw err;
     }
+  }
+
+  async inputParse() {
+    const result = await this.parseStdIn();
+
+    this.title = result.title;
+    this.text = result.text;
+    this.option = result.option;
+    return { title: this.title, text: this.text, option: this.option };
   }
 }
