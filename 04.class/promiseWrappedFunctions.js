@@ -32,6 +32,18 @@ export const promiseRun = (db, query, params) =>
     });
   });
 
+export const promiseAll = (db, query, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(query, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
 export const promiseClose = (db) =>
   new Promise((resolve, reject) => {
     db.close((err) => {
