@@ -22,7 +22,7 @@ class Memo {
     } else {
       // オプションがあれば出力処理を始める
       const memos = await this.outputHandler.outputMemos();
-      return { memos: memos, option: stdinOption };
+      return { memos, option: stdinOption };
     }
   }
 
@@ -33,7 +33,7 @@ class Memo {
       // memosテーブルを作成
       await promiseRun(db, createTableQuery);
       // データベース登録を実行
-      await promiseRun(db, insertTableQuery, [memo.title, memo.text]);
+      await promiseRun(db, insertTableQuery, [memo.title, memo.contents]);
     } catch (err) {
       console.error(err);
       throw err;
