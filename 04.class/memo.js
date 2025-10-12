@@ -3,11 +3,7 @@
 import sqlite3 from "sqlite3";
 
 import { createTableQuery, insertTableQuery } from "./queries.js";
-import {
-  promiseRun,
-  promiseClose,
-  promiseReadline,
-} from "./promiseWrappedFunctions.js";
+import { promiseRun, promiseClose } from "./promiseWrappedFunctions.js";
 
 import { InputHandler } from "./inputHandler.js";
 import { OutputHandler } from "./outputHandler.js";
@@ -19,13 +15,14 @@ class Memo {
   }
 
   async readStdIn() {
+    const stdinOption = process.argv[2];
     // オプションがなければ標準入力を受け付ける
-    if (process.argv[2] === undefined) {
-      return await this.inputParse();
+    if (stdinOption === undefined) {
+      return await this.inputHandler.parseStdIn();
     } else {
       // オプションがあれば出力処理を始める
       const memos = await this.outputHandler.outputMemos();
-      return { memos: memos, option: process.argv[2]};
+      return { memos: memos, option: stdinOption };
     }
   }
 
