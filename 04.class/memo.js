@@ -46,7 +46,9 @@ class Memo {
     this.outputHandler.outputLists(parsedMemo.memos);
   }
 
-  showContents() {}
+  async showContents(parsedMemo) {
+    await this.outputHandler.outputContents(parsedMemo.memos);
+  }
 
   delete() {}
 }
@@ -64,7 +66,7 @@ async function main() {
   } else if (parsedMemo.option === "-l") {
     await memo.showLists(parsedMemo);
   } else if (parsedMemo.option === "-r") {
-    console.log("タイトル一覧を表示して本文を出力する");
+    await memo.showContents(parsedMemo);
   } else if (parsedMemo.option === "-d") {
     console.log("タイトル一覧を表示して、メモを削除する");
   } else {
