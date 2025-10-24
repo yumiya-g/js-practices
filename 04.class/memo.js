@@ -46,11 +46,9 @@ class Memo {
     this.outputHandler.outputLists(parsedMemo.memos);
   }
 
-  async showContents(parsedMemo) {
-    await this.outputHandler.outputContents(parsedMemo.memos);
+  async selectMemos(parsedMemo) {
+    await this.outputHandler.outputContents(parsedMemo);
   }
-
-  delete() {}
 }
 
 async function main() {
@@ -65,10 +63,8 @@ async function main() {
     await memo.save(parsedMemo);
   } else if (parsedMemo.option === "-l") {
     await memo.showLists(parsedMemo);
-  } else if (parsedMemo.option === "-r") {
-    await memo.showContents(parsedMemo);
-  } else if (parsedMemo.option === "-d") {
-    console.log("タイトル一覧を表示して、メモを削除する");
+  } else if (parsedMemo.option === "-r" || parsedMemo.option === "-d") {
+    await memo.selectMemos(parsedMemo);
   } else {
     console.log("存在しないオプションが入力されました");
   }

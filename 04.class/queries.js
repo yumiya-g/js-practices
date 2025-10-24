@@ -3,3 +3,4 @@ export const createTableQuery =
 export const insertTableQuery =
   "INSERT INTO memos (title, contents) VALUES (?, ?)";
 export const selectTableQuery = "SELECT * FROM memos";
+export const deleteTableQuery = "DELETE FROM memos WHERE id = ?";

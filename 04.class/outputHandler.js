@@ -1,8 +1,12 @@
 import sqlite3 from "sqlite3";
 import enquirer from "enquirer";
 const { Select } = enquirer;
-import { promiseAll, promiseClose } from "./promiseWrappedFunctions.js";
-import { selectTableQuery } from "./queries.js";
+import {
+  promiseAll,
+  promiseClose,
+  promiseRun,
+} from "./promiseWrappedFunctions.js";
+import { selectTableQuery, deleteTableQuery } from "./queries.js";
 
 export class OutputHandler {
   constructor() {
@@ -37,23 +41,30 @@ export class OutputHandler {
   }
 
   async outputContents(memos) {
-    if (memos.length === 0) {
+    const db = new sqlite3.Database("memos.db");
+
+    if (memos.memos.length === 0) {
       console.log("登録されたメモはありません");
       return;
     }
 
     const selectOptions = [];
-    for (const memo of memos) {
+    for (const memo of memos.memos) {
       selectOptions.push({
         name: memo.title,
         value: memo,
       });
     }
 
+    const optionsDescription = {
+      "-r": "Choose a note you want to see:",
+      "-d": "Choose a memo you want to delete:",
+    };
+
     try {
       const prompt = new Select({
         name: "Memos",
-        message: "Choose a note you want to see:",
+        message: optionsDescription[memos.option],
         choices: selectOptions,
         result() {
           return this.focused.value;
@@ -61,8 +72,12 @@ export class OutputHandler {
       });
 
       const answer = await prompt.run();
-      console.log(answer.contents);
-      return answer;
+      if (memos.option === "-r") {
+        console.log(answer.contents);
+      } else if (memos.option === "-d") {
+        await promiseRun(db, deleteTableQuery, answer.id);
+        console.log("選択したメモを削除しました");
+      }
     } catch (err) {
       console.error(err);
       throw err;
