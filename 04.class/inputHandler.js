@@ -6,9 +6,6 @@ export class InputHandler {
       // 標準入力を受け付ける
       const memoLines = await promiseReadline();
 
-      // オプションを取る
-      const option = process.argv[2];
-
       // メモのタイトルとテキストを分離
       const title =
         memoLines[0] === undefined || memoLines[0] === ""
@@ -18,7 +15,7 @@ export class InputHandler {
         memoLines.slice(1).filter(Boolean).length === 0
           ? "NoTexts"
           : memoLines.slice(1).join("\n");
-      return { title, contents, option };
+      return { title, contents };
     } catch (err) {
       console.error(err);
       throw err;
