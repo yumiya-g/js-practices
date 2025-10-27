@@ -1,17 +1,14 @@
 #!/usr/bin/env node
 
-import sqlite3 from "sqlite3";
-
-import { createTableQuery, insertTableQuery } from "./queries.js";
-import { promiseRun, promiseClose } from "./promiseWrappedFunctions.js";
-
 import { InputHandler } from "./inputHandler.js";
 import { OutputHandler } from "./outputHandler.js";
+import { MemoRepositry } from "./memoRepositry.js";
 
 class Memo {
   constructor() {
     this.inputHandler = new InputHandler();
     this.outputHandler = new OutputHandler();
+    this.memoRepositry = new MemoRepositry();
   }
 
   async readStdIn() {
@@ -21,24 +18,8 @@ class Memo {
       return await this.inputHandler.parseStdIn();
     } else {
       // オプションがあれば出力処理を始める
-      const memos = await this.outputHandler.outputMemos();
+      const memos = await this.memoRepositry.find();
       return { memos, option: stdinOption };
-    }
-  }
-
-  async save(memo) {
-    const db = new sqlite3.Database("memos.db");
-
-    try {
-      // memosテーブルを作成
-      await promiseRun(db, createTableQuery);
-      // データベース登録を実行
-      await promiseRun(db, insertTableQuery, [memo.title, memo.contents]);
-    } catch (err) {
-      console.error(err);
-      throw err;
-    } finally {
-      await promiseClose(db);
     }
   }
 
@@ -55,12 +36,15 @@ async function main() {
   // メモインスタンスを作成
   const memo = new Memo();
 
+  // メモリポジトリインスタンスを作成
+  const memoRepositry = new MemoRepositry();
+
   // 標準入力をパース
   const parsedMemo = await memo.readStdIn();
 
   // オプションなしで保存処理を開始
   if (parsedMemo.option === undefined) {
-    await memo.save(parsedMemo);
+    await memoRepositry.save(parsedMemo);
   } else if (parsedMemo.option === "-l") {
     await memo.showLists(parsedMemo);
   } else if (parsedMemo.option === "-r" || parsedMemo.option === "-d") {
