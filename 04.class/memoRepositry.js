@@ -20,9 +20,7 @@ export class MemoRepositry {
     const db = new sqlite3.Database(this.dbPath);
 
     try {
-      // memosテーブルを作成
       await promiseRun(db, createTableQuery);
-      // データベース登録を実行
       await promiseRun(db, insertTableQuery, [memo.title, memo.contents]);
     } catch (err) {
       console.error(err);
@@ -32,11 +30,10 @@ export class MemoRepositry {
     }
   }
 
-  async find() {
+  async findAll() {
     const db = new sqlite3.Database(this.dbPath);
 
     try {
-      // データベースから全メモを取得
       return await promiseAll(db, selectTableQuery);
     } catch (err) {
       console.error(err);
