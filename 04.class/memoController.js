@@ -1,0 +1,82 @@
+import { InputHandler } from "./inputHandler.js";
+import { OutputHandler } from "./outputHandler.js";
+import { MemoRepositry } from "./memoRepositry.js";
+
+export class MemoController {
+  constructor() {
+    this.outputHandler = new OutputHandler();
+    this.inputHandler = new InputHandler();
+    this.memoRepositry = new MemoRepositry();
+  }
+
+  async run() {
+    const stdinOption = process.argv[2];
+
+    if (!stdinOption) {
+      await this.saveMemo();
+    } else if (stdinOption === "-l") {
+      await this.listMemo();
+    } else if (stdinOption === "-r") {
+      await this.readMemo();
+    } else if (stdinOption === "-d") {
+      await this.deleteMemo();
+    } else {
+      console.log("存在しないオプションが入力されました");
+    }
+  }
+
+  async saveMemo() {
+    try {
+      console.log("メモを入力してください!");
+      const inputMemo = await this.inputHandler.parseStdIn();
+      await this.memoRepositry.save(inputMemo);
+    } catch (err) {
+      console.log("savememo err!");
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async listMemo() {
+    try {
+      const memos = await this.memoRepositry.findAll();
+      this.outputHandler.outputLists(memos);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async readMemo() {
+    try {
+      const memos = await this.memoRepositry.findAll();
+      const selectedMemo = await this.outputHandler.selectMemo(
+        memos,
+        "Choose a note you want to see:",
+      );
+      if (selectedMemo) {
+        console.log(selectedMemo.contents);
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async deleteMemo() {
+    try {
+      const memos = await this.memoRepositry.findAll();
+      const selectedMemo = await this.outputHandler.selectMemo(
+        memos,
+        "Choose a note you want to delete:",
+      );
+      if (selectedMemo) {
+        await this.memoRepositry.delete(selectedMemo.id);
+        console.log(`"${selectedMemo.title}"を削除しました`);
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+}
