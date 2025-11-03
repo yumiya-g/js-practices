@@ -1,19 +1,12 @@
 import { promiseReadline } from "./promiseWrappedFunctions.js";
+import { Memo } from "./memo.js";
 
 export class InputHandler {
   async parseStdIn() {
     try {
       const memoLines = await promiseReadline();
-
-      const title =
-        memoLines[0] === undefined || memoLines[0] === ""
-          ? "NoTitle"
-          : memoLines[0];
-      const contents =
-        memoLines.slice(1).filter(Boolean).length === 0
-          ? "NoTexts"
-          : memoLines.slice(1).join("\n");
-      return { title, contents };
+      const memo = new Memo(null, memoLines[0], memoLines.slice(1).join("\n"));
+      return memo;
     } catch (err) {
       console.error(err);
       throw err;
