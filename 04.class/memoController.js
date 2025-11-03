@@ -21,17 +21,16 @@ export class MemoController {
     } else if (stdinOption === "-d") {
       await this.deleteMemo();
     } else {
-      console.log("存在しないオプションが入力されました");
+      console.log("存在しないオプションが使用されました");
     }
   }
 
   async saveMemo() {
     try {
-      console.log("メモを入力してください!");
+      console.log("メモを入力してください（ctrl + D で保存します）");
       const inputMemo = await this.inputHandler.parseStdIn();
       await this.memoRepositry.save(inputMemo);
     } catch (err) {
-      console.log("savememo err!");
       console.error(err);
       throw err;
     }
