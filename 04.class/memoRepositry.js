@@ -4,6 +4,7 @@ import {
   promiseRun,
   promiseClose,
 } from "./promiseWrappedFunctions.js";
+import { Memo } from "./memo.js";
 
 const createTableQuery =
   "CREATE TABLE IF NOT EXISTS memos (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, contents TEXT)";
@@ -34,7 +35,14 @@ export class MemoRepositry {
     const db = new sqlite3.Database(this.dbPath);
 
     try {
-      return await promiseAll(db, selectTableQuery);
+      const memos = await promiseAll(db, selectTableQuery);
+
+      const memoInstances = [];
+      for (const memo of memos) {
+        const memoInstance = new Memo(memo.id, memo.title, memo.contents);
+        memoInstances.push(memoInstance);
+      }
+      return memoInstances;
     } catch (err) {
       console.error(err);
       throw err;
