@@ -3,11 +3,11 @@
 import { MemoController } from "./memoController.js";
 
 export class Memo {
-  constructor(id, title = "No Title", contents = "No Contents") {
+  constructor(id, title, contents) {
     this.id = id;
     this.title = title === undefined || title === "" ? "NoTitle" : title;
     this.contents =
-      title === undefined || title === "" ? "NoContents" : contents;
+      contents === undefined || contents === "" ? "NoContents" : contents;
   }
 }
 
