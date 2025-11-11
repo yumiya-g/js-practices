@@ -1,7 +1,11 @@
 import { promiseReadline } from "./promiseWrappedFunctions.js";
 import { Memo } from "./memo.js";
 
-export class InputHandler {
+export class MemoInput {
+  constructor() {
+    console.log("Input Class New!");
+  }
+
   async parseStdIn() {
     try {
       const memoLines = await promiseReadline();
