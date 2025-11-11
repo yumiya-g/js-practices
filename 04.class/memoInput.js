@@ -6,7 +6,7 @@ export class MemoInput {
     console.log("Input Class New!");
   }
 
-  async parseStdIn() {
+  static async parseStdIn() {
     try {
       const memoLines = await promiseReadline();
       const memo = new Memo(null, memoLines[0], memoLines.slice(1).join("\n"));

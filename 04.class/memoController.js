@@ -1,11 +1,10 @@
-import { InputHandler } from "./inputHandler.js";
-import { OutputHandler } from "./outputHandler.js";
+import { MemoInput } from "./memoInput.js";
+import { MemoOutput } from "./memoOutput.js";
 import { MemoRepositry } from "./memoRepositry.js";
 
 export class MemoController {
   constructor() {
-    this.outputHandler = new OutputHandler();
-    this.inputHandler = new InputHandler();
+    this.MemoOutput = new MemoOutput();
     this.memoRepositry = new MemoRepositry();
   }
 
@@ -28,7 +27,7 @@ export class MemoController {
   async saveMemo() {
     try {
       console.log("メモを入力してください（ctrl + D で保存します）");
-      const inputMemo = await this.inputHandler.parseStdIn();
+      const inputMemo = await MemoInput.parseStdIn();
       await this.memoRepositry.save(inputMemo);
     } catch (err) {
       console.error(err);
@@ -39,7 +38,7 @@ export class MemoController {
   async listMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      this.outputHandler.outputLists(memos);
+      this.MemoOutput.outputLists(memos);
     } catch (err) {
       console.error(err);
       throw err;
@@ -49,7 +48,7 @@ export class MemoController {
   async readMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      const selectedMemo = await this.outputHandler.selectMemo(
+      const selectedMemo = await this.MemoOutput.selectMemo(
         memos,
         "Choose a note you want to see:",
       );
@@ -65,7 +64,7 @@ export class MemoController {
   async deleteMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      const selectedMemo = await this.outputHandler.selectMemo(
+      const selectedMemo = await this.MemoOutput.selectMemo(
         memos,
         "Choose a note you want to delete:",
       );
