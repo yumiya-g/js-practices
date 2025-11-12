@@ -6,7 +6,7 @@ export class MemoOutput {
     console.log("Output Class New!");
   }
 
-  outputLists(memos) {
+  static outputLists(memos) {
     if (memos.length === 0) {
       console.log("登録されたメモはありません");
       return;
@@ -16,7 +16,7 @@ export class MemoOutput {
     }
   }
 
-  async selectMemo(memos, message) {
+  static async selectMemo(memos, message) {
     if (memos.length === 0) {
       console.log("登録されたメモはありません");
       return;

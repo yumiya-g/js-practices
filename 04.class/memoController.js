@@ -4,7 +4,6 @@ import { MemoRepositry } from "./memoRepositry.js";
 
 export class MemoController {
   constructor() {
-    this.MemoOutput = new MemoOutput();
     this.memoRepositry = new MemoRepositry();
   }
 
@@ -38,7 +37,7 @@ export class MemoController {
   async listMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      this.MemoOutput.outputLists(memos);
+      MemoOutput.outputLists(memos);
     } catch (err) {
       console.error(err);
       throw err;
@@ -48,7 +47,7 @@ export class MemoController {
   async readMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      const selectedMemo = await this.MemoOutput.selectMemo(
+      const selectedMemo = await MemoOutput.selectMemo(
         memos,
         "Choose a note you want to see:",
       );
@@ -64,7 +63,7 @@ export class MemoController {
   async deleteMemo() {
     try {
       const memos = await this.memoRepositry.findAll();
-      const selectedMemo = await this.MemoOutput.selectMemo(
+      const selectedMemo = await MemoOutput.selectMemo(
         memos,
         "Choose a note you want to delete:",
       );
