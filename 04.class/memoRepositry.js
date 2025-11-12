@@ -13,8 +13,8 @@ const selectTableQuery = "SELECT * FROM memos";
 const deleteTableQuery = "DELETE FROM memos WHERE id = ?";
 
 export class MemoRepositry {
-  constructor(dbPath = "memos.db") {
-    this.dbPath = dbPath;
+  constructor() {
+    this.dbPath = "memos.db";
   }
 
   async save(memo) {
@@ -35,6 +35,7 @@ export class MemoRepositry {
     const db = new sqlite3.Database(this.dbPath);
 
     try {
+      await promiseRun(db, createTableQuery);
       const memos = await promiseAll(db, selectTableQuery);
 
       const memoInstances = [];
@@ -55,6 +56,7 @@ export class MemoRepositry {
     const db = new sqlite3.Database(this.dbPath);
 
     try {
+      await promiseRun(db, createTableQuery);
       await promiseRun(db, deleteTableQuery, memoId);
     } catch (err) {
       console.error(err);
