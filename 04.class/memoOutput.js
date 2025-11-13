@@ -2,10 +2,6 @@ import enquirer from "enquirer";
 const { Select } = enquirer;
 
 export class MemoOutput {
-  constructor() {
-    console.log("Output Class New!");
-  }
-
   static outputLists(memos) {
     if (memos.length === 0) {
       console.log("登録されたメモはありません");

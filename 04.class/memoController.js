@@ -28,6 +28,7 @@ export class MemoController {
       console.log("メモを入力してください（ctrl + D で保存します）");
       const inputMemo = await MemoInput.parseStdIn();
       await this.memoRepositry.save(inputMemo);
+      console.log("メモの入力を完了しました");
     } catch (err) {
       console.error(err);
       throw err;

@@ -2,10 +2,6 @@ import { promiseReadline } from "./promiseWrappedFunctions.js";
 import { Memo } from "./memo.js";
 
 export class MemoInput {
-  constructor() {
-    console.log("Input Class New!");
-  }
-
   static async parseStdIn() {
     try {
       const memoLines = await promiseReadline();

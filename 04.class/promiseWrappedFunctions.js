@@ -15,7 +15,6 @@ export const promiseReadline = () => {
     });
 
     rl.on("close", () => {
-      console.log("メモの入力を完了しました");
       resolve(lines);
     });
   });
